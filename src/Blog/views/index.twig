@@ -1,0 +1,18 @@
+{% extends 'layout.twig' %}
+
+{% block title "Liste des articles" %}
+
+{% block body %}
+
+    <p>Liste des articles</p>
+
+    <ul>
+        <li><a href="{{ router.generateUri('blog.show', {slug: 'azeaeez0-7zyeug'}) }}">Article</a></li>
+        <li>Article 1</li>
+        <li>Article 1</li>
+        <li>Article 1</li>
+        <li>Article 1</li>
+        <li>Article 1</li>
+    </ul>
+
+{% endblock %}

@@ -1,12 +1,15 @@
 <?php
 require '../vendor/autoload.php';
 
-$renderer = new \App\Framework\Renderer\TwigRenderer(dirname(__DIR__) . '/views');
+// Conteneur d'injection de dépendances PHP DI
+$builder = new \DI\ContainerBuilder();
+$builder->addDefinitions(dirname(__DIR__) . '/config/config.php');
+// Override /config/config.php
+$builder->addDefinitions(dirname(__DIR__) . '/config.php');
+$container = $builder->build();
 
-$app = new \Framework\App([
+$app = new \Framework\App($container, [
     \App\Blog\BlogModule::class
-], [
-    'renderer' => $renderer
 ]);
 
 $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());

@@ -3,6 +3,7 @@
 namespace Framework;
 
 use GuzzleHttp\Psr7\Response;
+use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -16,26 +17,22 @@ class App
     private $modules = [];
 
     /**
-     * Router
-     * @var Router
+     * Container
+     * @var ContainerInterface
      */
-    private $router;
+    private $container;
 
     /**
      * App constructor.
+     * @param ContainerInterface $container
      * @param string[] $modules Liste des modules à charger
-     * @param array $dependencies
      */
-    public function __construct(array $modules = [], array $dependencies = [])
+    public function __construct(ContainerInterface $container, array $modules = [])
     {
-        $this->router = new Router();
-
-        if (array_key_exists('renderer', $dependencies)) {
-            $dependencies['renderer']->addGlobal('router', $this->router);
-        }
+        $this->container = $container;
 
         foreach ($modules as $module) {
-            $this->modules[] = new $module($this->router, $dependencies['renderer']);
+            $this->modules[] = $container->get($module);
         }
     }
 
@@ -50,7 +47,7 @@ class App
                 ->withHeader('Location', substr($uri, 0, -1));
         }
 
-        $route = $this->router->match($request);
+        $route = $this->container->get(Router::class)->match($request);
 
         if (is_null($route)) {
             return new Response(404, [], '<h1>Erreur 404</h1>');

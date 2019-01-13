@@ -47,7 +47,8 @@ class App
                 ->withHeader('Location', substr($uri, 0, -1));
         }
 
-        $route = $this->container->get(Router::class)->match($request);
+        $router = $this->container->get(Router::class);
+        $route = $router->match($request);
 
         if (is_null($route)) {
             return new Response(404, [], '<h1>Erreur 404</h1>');
@@ -59,7 +60,16 @@ class App
             return $request->withAttribute($key, $params[$key]);
         }, $request);
 
-        $response = call_user_func_array($route->getCallback(), [$request]);
+
+
+        $callback = $route->getCallback();
+
+        if (is_string($callback)) {
+            $callback = $this->container->get($callback);
+        }
+
+        $response = call_user_func_array($callback, [$request]);
+
 
         if (is_string($response)) {
             return new Response(200, [], $response);

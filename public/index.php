@@ -1,5 +1,5 @@
 <?php
-require '../vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 $modules = [
     \App\Blog\BlogModule::class

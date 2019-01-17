@@ -6,13 +6,18 @@
 
     <p>Liste des articles</p>
 
-    <ul>
-        <li><a href="{{ path('blog.show', {slug: 'azeaeez0-7zyeug'}) }}">Article</a></li>
-        <li>Article 1</li>
-        <li>Article 1</li>
-        <li>Article 1</li>
-        <li>Article 1</li>
-        <li>Article 1</li>
-    </ul>
+    {% if posts is defined and posts is not null %}
+
+        <ul>
+        {% for post in posts %}
+            <li>
+                <a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}">
+                    {{ post.name }}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+
+    {% endif %}
 
 {% endblock %}

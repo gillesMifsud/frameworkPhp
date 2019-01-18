@@ -21,9 +21,8 @@ $container = $builder->build();
 
 $app = new \Framework\App($container, $modules);
 
-// Retourns interface type used
+// Returns interface type used
 if (php_sapi_name() !== "cli") {
-    throw new Exception();
     $response = $app->run(\GuzzleHttp\Psr7\ServerRequest::fromGlobals());
     \Http\Response\send($response);
 }

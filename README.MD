@@ -9,4 +9,5 @@ Lancer les tests unitaires
 
 Lancer le codesniffer
 
+./vendor/bin/phpcbf
 ./vendor/bin/phpcs

@@ -2,10 +2,10 @@
 
 namespace App\Blog\Actions;
 
+use App\Blog\Table\PostTable;
+use Framework\Actions\RouterAwareAction;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
-use GuzzleHttp\Psr7\Response;
-use PDO;
 use Psr\Http\Message\RequestInterface as Request;
 use Psr\Http\Message\ResponseInterface;
 
@@ -15,27 +15,29 @@ class BlogAction
      * @var RendererInterface
      */
     private $renderer;
-    /**
-     * @var PDO
-     */
-    private $pdo;
+
     /**
      * @var Router
      */
     private $router;
+    /**
+     * @var PostTable
+     */
+    private $postTable;
 
+    use RouterAwareAction;
 
     /**
      * BlogAction constructor.
      * @param RendererInterface $renderer
-     * @param PDO $pdo
+     * @param PostTable $postTable
      * @param Router $router
      */
-    public function __construct(RendererInterface $renderer, PDO $pdo, Router $router)
+    public function __construct(RendererInterface $renderer, Router $router, PostTable $postTable)
     {
         $this->renderer = $renderer;
-        $this->pdo = $pdo;
         $this->router = $router;
+        $this->postTable = $postTable;
     }
 
     /**
@@ -54,9 +56,7 @@ class BlogAction
 
     public function index(): string
     {
-        $posts = $this->pdo
-            ->query('SELECT * FROM posts ORDER BY created_at DESC LIMIT 10')
-            ->fetchAll();
+        $posts = $this->postTable->findPaginated();
 
         return $this->renderer->render('@blog/index', [
             'posts' => $posts
@@ -65,6 +65,7 @@ class BlogAction
 
     /**
      * Show single post
+     *
      * @param Request $request
      * @return ResponseInterface|string
      */
@@ -72,22 +73,14 @@ class BlogAction
     {
         $slug = $request->getAttribute('slug');
 
-        $query = $this->pdo->prepare('SELECT * FROM posts WHERE id = ?');
-        $query->execute([$request->getAttribute('id')]);
-        $post = $query->fetch();
+        $post =$this->postTable->find($request->getAttribute('id'));
 
         if ($post->slug !== $slug) {
-
-            $redirectUri = $this->router->generateUri('blog.show', [
+            return $this->redirect('blog.show', [
                 'slug' => $post->slug,
                 'id' => $post->id
             ]);
-
-            return (new Response())
-                ->withStatus(301)
-                ->withHeader('location', $redirectUri);
         }
-
 
         return $this->renderer->render('@blog/show', [
             'post' => $post

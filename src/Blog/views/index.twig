@@ -8,15 +8,38 @@
 
     {% if posts is defined and posts is not null %}
 
-        <ul>
-        {% for post in posts %}
-            <li>
-                <a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}">
-                    {{ post.name }}
-                </a>
-            </li>
-        {% endfor %}
-        </ul>
+        <div class="row">
+
+            {% for row in posts | batch(3) %}
+
+                <div class="card-deck m">
+                    {% for post in row %}
+                        <div class="card mb-4">
+                            <div class="card-header">
+                                <h2>
+                                    <a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}" class="card-link">
+                                        {{ post.name }}
+                                    </a>
+                                </h2>
+                            </div>
+                            <div class="card-body">
+                                {{ post.content | nl2br | excerpt }}
+                            </div>
+                            <div class="card-footer text-center">
+                                <a href="{{ path('blog.show', {slug: post.slug, id: post.id}) }}" class="btn btn-primary">
+                                    Voir l'article
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+            {% endfor %}
+
+        </div>
+        <div class="row">
+            {{ paginate(posts, 'blog.index') }}
+        </div>
 
     {% endif %}
 

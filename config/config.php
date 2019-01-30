@@ -11,7 +11,9 @@ return [
     'database.name' => 'frameworkphp',
     'views.path' => dirname(__DIR__) . '/views',
     'twig.extensions' => [
-        \DI\get(Router\RouterTwigExtension::class)
+        \DI\get(Router\RouterTwigExtension::class),
+        \DI\get(\Framework\Twig\PagerFantaExtension::class),
+        \DI\get(\Framework\Twig\TextExtension::class)
     ],
     Router::class => \DI\create(),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),

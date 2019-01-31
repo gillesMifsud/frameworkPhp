@@ -13,7 +13,8 @@ return [
     'twig.extensions' => [
         \DI\get(Router\RouterTwigExtension::class),
         \DI\get(\Framework\Twig\PagerFantaExtension::class),
-        \DI\get(\Framework\Twig\TextExtension::class)
+        \DI\get(\Framework\Twig\TextExtension::class),
+        \DI\get(\Framework\Twig\TimeExtension::class)
     ],
     Router::class => \DI\create(),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),

@@ -1,0 +1,40 @@
+{% extends '@admin/layout.twig' %}
+
+{% block title "Editer les articles" %}
+
+{% block body %}
+
+    {% if items is defined and items is not null %}
+
+        <h2>Liste des articles</h2>
+        <p class="text-right">
+            <a href="" class="btn btn-success">Ajouter un article</a>
+        </p>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <td>Titre</td>
+                    <td>Actions</td>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>
+                        <a href="{{ path('admin.blog.edit', {id: item.id}) }}" class="btn btn-primary">Editer</a>
+                        <a href="" class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="row">
+            {{ paginate(items, 'admin.blog.index') }}
+        </div>
+
+    {% endif %}
+
+{% endblock %}

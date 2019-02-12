@@ -28,9 +28,19 @@ class Router
      * @param string|callable $callable
      * @param string $name
      */
-    public function get(string $path, $callable, string $name)
+    public function get(string $path, $callable, ?string $name = null)
     {
         $this->router->addRoute(new ZendRoute($path, $callable, ['GET'], $name));
+    }
+
+    /**
+     * @param string $path
+     * @param $callable
+     * @param string|null $name
+     */
+    public function post(string $path, $callable, ?string $name = null)
+    {
+        $this->router->addRoute(new ZendRoute($path, $callable, ['POST'], $name));
     }
 
     /**

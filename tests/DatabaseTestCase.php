@@ -27,10 +27,21 @@ class DatabaseTestCase extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
         ]);
 
+        $createTables = "CREATE TABLE IF NOT EXISTS posts (
+            id INTEGER PRIMARY KEY, 
+            name VARCHAR, 
+            slug VARCHAR,
+            content LONGTEXT,
+            updated_at DATETIME,
+            created_at DATETIME)";
+
+        $pdo->exec($createTables);
+
+
         $configArray = require('phinx.php');
         $configArray['environments']['test'] = [
             'adapter' => 'sqlite',
-            'name' => 'test',
+            'name' => 'frameworkphp',
             'connexion' => $pdo
         ];
 

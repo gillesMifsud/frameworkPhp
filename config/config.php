@@ -3,6 +3,8 @@
 use App\Framework\Renderer\TwigRendererFactory;
 use Framework\Renderer\RendererInterface;
 use Framework\Router;
+use Framework\Session\PHPSession;
+use Framework\Session\SessionInterface;
 
 return [
     'database.host' => 'localhost',
@@ -14,8 +16,10 @@ return [
         \DI\get(Router\RouterTwigExtension::class),
         \DI\get(\Framework\Twig\PagerFantaExtension::class),
         \DI\get(\Framework\Twig\TextExtension::class),
-        \DI\get(\Framework\Twig\TimeExtension::class)
+        \DI\get(\Framework\Twig\TimeExtension::class),
+        \DI\get(\Framework\Twig\FlashExtension::class)
     ],
+    SessionInterface::class => \DI\create(PHPSession::class),
     Router::class => \DI\create(),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),
     PDO::class => function (Psr\Container\ContainerInterface $c) {

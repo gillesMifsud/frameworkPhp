@@ -40,6 +40,15 @@ class App
     {
         $uri = $request->getUri()->getPath();
 
+        // Check if we force method, like delete which is not supported by browsers
+        // Ex : src/Blog/views/admin/index.twig => <input type="hidden" name="_method" value="DELETE">
+        $parsedBody = $request->getParsedBody();
+        if (array_key_exists('_method', $parsedBody) &&
+            in_array($parsedBody['_method'], ['DELETE', 'PUT'])
+        ) {
+            $request = $request->withMethod($parsedBody['_method']);
+        }
+
         // redirect if url ends with /
         if (!empty($uri) && $uri[-1] === "/") {
             return (new Response())

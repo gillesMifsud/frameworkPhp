@@ -1,6 +1,6 @@
 {% extends '@admin/layout.twig' %}
 
-{% block title "Editer les articles" %}
+{% block title "Administration: liste des articles" %}
 
 {% block body %}
 
@@ -8,7 +8,7 @@
 
         <h2>Liste des articles</h2>
         <p class="text-right">
-            <a href="" class="btn btn-success">Ajouter un article</a>
+            <a href="{{ path('blog.admin.create') }}" class="btn btn-success">Ajouter un article</a>
         </p>
 
         <table class="table table-striped">
@@ -23,8 +23,12 @@
                 <tr>
                     <td>{{ item.name }}</td>
                     <td>
-                        <a href="{{ path('admin.blog.edit', {id: item.id}) }}" class="btn btn-primary">Editer</a>
-                        <a href="" class="btn btn-danger">Supprimer</a>
+                        <a href="{{ path('blog.admin.edit', {id: item.id}) }}" class="btn btn-primary">Editer</a>
+                        <form action="{{ path('blog.admin.delete', {id: item.id}) }}" style="display: inline-block;" method="post"
+                              onsubmit="return confirm('Voulez-vous vraiment supprimer le post {{ item.id }} ?')">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button class="btn btn-danger">Supprimer</button>
+                        </form>
                     </td>
                 </tr>
             {% endfor %}
@@ -32,7 +36,7 @@
         </table>
 
         <div class="row">
-            {{ paginate(items, 'admin.blog.index') }}
+            {{ paginate(items, 'blog.admin.index') }}
         </div>
 
     {% endif %}

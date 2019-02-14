@@ -46,6 +46,12 @@ class AdminBlogAction
      */
     public function __invoke(Request $request)
     {
+        if ($request->getMethod() === 'DELETE') {
+            return $this->delete($request);
+        }
+        if (substr((string)$request->getUri(), -3) === 'new') {
+            return $this->create($request);
+        }
         if ($request->getAttribute('id')) {
             return $this->edit($request);
         }
@@ -74,17 +80,65 @@ class AdminBlogAction
 
         if ($request->getMethod() === 'POST') {
             // Filter only needed values
-            $params = array_filter($request->getParsedBody(), function ($key) {
-                return in_array($key, ['name', 'content', 'slug']);
-            }, ARRAY_FILTER_USE_KEY);
+            $params = $this->getParams($request);
+            // Update updated_at entity field
+            $params['updated_at'] = date('Y-m-d H:i:s');
             // Then update
             $this->postTable->update($item->id, $params);
             // Redirect
-            return $this->redirect('admin.blog.index');
+            return $this->redirect('blog.admin.index');
         }
 
         return $this->renderer->render('@blog/admin/edit', [
             'item' => $item
         ]);
+    }
+
+    /**
+     * New post
+     * @param Request $request
+     * @return ResponseInterface|string
+     */
+    public function create(Request $request)
+    {
+        if ($request->getMethod() === 'POST') {
+            // Filter only needed values
+            $params = $this->getParams($request);
+            // Generate missing fields
+            $params = array_merge($params, [
+                'updated_at' => date('Y-m-d H:i:s'),
+                'created_at' => date('Y-m-d H:i:s')
+            ]);
+            // Then create
+            $this->postTable->insert($params);
+            // Redirect
+            return $this->redirect('blog.admin.index');
+        }
+
+        return $this->renderer->render('@blog/admin/create', [
+
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return ResponseInterface
+     */
+    private function delete(Request $request)
+    {
+        $id = $request->getAttribute('id');
+        $this->postTable->delete($id);
+        return $this->redirect('blog.admin.index');
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    private function getParams(Request $request)
+    {
+        return array_filter($request->getParsedBody(), function ($key) {
+            return in_array($key, ['name', 'content', 'slug']);
+        }, ARRAY_FILTER_USE_KEY);
     }
 }

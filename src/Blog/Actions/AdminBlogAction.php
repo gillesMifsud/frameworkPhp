@@ -45,8 +45,8 @@ class AdminBlogAction
         RendererInterface $renderer,
         Router $router,
         PostTable $postTable,
-        FlashService $flashService)
-    {
+        FlashService $flashService
+    ) {
         $this->renderer = $renderer;
         $this->router = $router;
         $this->postTable = $postTable;

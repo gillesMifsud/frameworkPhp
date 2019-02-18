@@ -11,6 +11,8 @@ class FlashService
 
     private $sessionKey = 'flash';
 
+    private $messages;
+
     /**
      * FlashService constructor.
      * @param SessionInterface $session
@@ -27,12 +29,22 @@ class FlashService
         $this->session->set($this->sessionKey, $flash);
     }
 
-    public function get(string $type): ?string
+    public function error(string $message)
     {
         $flash = $this->session->get($this->sessionKey, []);
+        $flash['error'] = $message;
+        $this->session->set($this->sessionKey, $flash);
+    }
 
-        if (array_key_exists($type, $flash)) {
-            return $flash[$type];
+    public function get(string $type): ?string
+    {
+        if (is_null($this->messages)) {
+            $this->messages = $this->session->get($this->sessionKey, []);
+            $this->session->delete($this->sessionKey);
+        }
+
+        if (array_key_exists($type, $this->messages)) {
+            return $this->messages[$type];
         }
 
         return null;
